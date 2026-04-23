@@ -1,0 +1,163 @@
+// SeatCheck data model
+// --------------------------------------------------------------
+// Relational shape: Users own Children and SavedSeats. SavedSeats
+// reference CarSeats (the public catalog). CarSeats have many
+// Recalls pulled from NHTSA. Photos are stored for identification.
+// --------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// CATALOG — public, read-only for users
+// ============================================================
+model CarSeat {
+  id                 String    @id
+  brand              String
+  model              String
+  type               String            // Infant | Convertible | All-in-One | Booster | Harness Booster | Convertible (Rotating)
+  modelNumbers       String[]          // printed on the seat label
+  msrp               String?
+  year               Int?              // year introduced
+  color              String?           // thumbnail tint
+  site               String            // manufacturer domain (for scoped manual search)
+  productUrl         String            // stable manufacturer product page
+
+  // Normalized specs for fit-check and display
+  expirationYears    Int       @default(7)
+  faaApproved        Boolean   @default(false)
+  latchWeightMax     String?
+  dimensions         String?
+  seatWeight         String?
+
+  // Mode-specific limits — stored as JSON for flexibility
+  // Shape: { rearFacing: { weightMin, weightMax, heightMax },
+  //         forwardFacing: {...}, highbackBooster: {...}, backlessBooster: {...}, booster: {...} }
+  modes              Json
+
+  // Rich content
+  installSteps       Json              // [{title, body}, ...]
+  commonMistakes     String[]
+  notes              String?
+
+  // Relationships
+  recalls            Recall[]
+  savedSeats         SavedSeat[]
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([brand])
+  @@index([type])
+}
+
+// ============================================================
+// RECALLS — synced from NHTSA nightly
+// ============================================================
+model Recall {
+  id                 String    @id @default(cuid())
+  nhtsaId            String    @unique                // NHTSA campaign ID
+  carSeatId          String?
+  carSeat            CarSeat?  @relation(fields: [carSeatId], references: [id], onDelete: SetNull)
+
+  // Matching fields — we match by brand + model text
+  manufacturer       String
+  productName        String
+  componentDesc      String?
+  summary            String                            // consequence summary
+  remedy             String?
+  datePublished      DateTime
+  affectedUnitsText  String?                           // e.g. "Between 2019 and 2022"
+
+  rawPayload         Json                              // full NHTSA response for auditing
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([carSeatId])
+  @@index([datePublished])
+}
+
+// ============================================================
+// USERS — email + password auth (MVP)
+// ============================================================
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  passwordHash       String
+  name               String?
+
+  children           Child[]
+  savedSeats         SavedSeat[]
+
+  // Notification preferences
+  wantsRecallAlerts        Boolean @default(true)
+  wantsExpirationWarnings  Boolean @default(true)
+  wantsInstallTips         Boolean @default(false)
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+// ============================================================
+// CHILDREN — used for fit-check
+// ============================================================
+model Child {
+  id                 String    @id @default(cuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name               String
+  dob                DateTime?
+  weightLb           Float?
+  heightIn           Float?
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+// ============================================================
+// SAVED SEATS — a user's registered seat
+// ============================================================
+model SavedSeat {
+  id                 String    @id @default(cuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  carSeatId          String
+  carSeat            CarSeat   @relation(fields: [carSeatId], references: [id], onDelete: Cascade)
+
+  nickname           String?
+  dateOfManufacture  DateTime
+  lastRecallCheckAt  DateTime?
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@unique([userId, carSeatId])
+  @@index([userId])
+}
+
+// ============================================================
+// PHOTOS — stored for identification (phase 4)
+// ============================================================
+model SeatPhoto {
+  id                 String    @id @default(cuid())
+  userId             String?                           // null if anonymous identification
+  carSeatId          String?                           // set if user confirmed the match
+  storageKey         String                            // S3/Railway key
+  embedding          Float[]                           // CLIP embedding vector
+  ocrText            String?
+  identifiedAt       DateTime?
+  createdAt          DateTime  @default(now())
+
+  @@index([userId])
+  @@index([carSeatId])
+}

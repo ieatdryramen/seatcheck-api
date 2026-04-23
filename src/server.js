@@ -1,0 +1,63 @@
+// SeatCheck API — Express entry point
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import cron from "node-cron";
+
+import { catalogRouter } from "./routes/catalog.js";
+import { authRouter } from "./routes/auth.js";
+import { childrenRouter } from "./routes/children.js";
+import { savedSeatsRouter } from "./routes/savedSeats.js";
+import { recallsRouter } from "./routes/recalls.js";
+import { fitCheckRouter } from "./routes/fitCheck.js";
+import { identifyRouter } from "./routes/identify.js";
+import { syncRecalls } from "./services/recallSync.js";
+import { errorHandler } from "./lib/errors.js";
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// --- Middleware ---
+app.use(cors({
+  origin: process.env.CORS_ORIGIN?.split(",") ?? "*",
+  credentials: true
+}));
+app.use(express.json({ limit: "10mb" }));
+
+// --- Health ---
+app.get("/", (_req, res) => {
+  res.json({ service: "seatcheck-api", version: "0.1.0", status: "ok" });
+});
+app.get("/health", (_req, res) => res.json({ ok: true, ts: new Date().toISOString() }));
+
+// --- Routes ---
+app.use("/api/catalog", catalogRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/children", childrenRouter);
+app.use("/api/saved-seats", savedSeatsRouter);
+app.use("/api/recalls", recallsRouter);
+app.use("/api/fit-check", fitCheckRouter);
+app.use("/api/identify", identifyRouter);
+
+// --- Errors ---
+app.use(errorHandler);
+
+// --- Start ---
+app.listen(PORT, () => {
+  console.log(`SeatCheck API listening on :${PORT}`);
+});
+
+// --- Background jobs ---
+// Sync NHTSA recalls every night at 3am UTC.
+if (process.env.ENABLE_RECALL_CRON === "true") {
+  cron.schedule("0 3 * * *", async () => {
+    console.log("[cron] Running nightly NHTSA recall sync…");
+    try {
+      const result = await syncRecalls();
+      console.log("[cron] Sync complete:", result);
+    } catch (err) {
+      console.error("[cron] Sync failed:", err);
+    }
+  });
+  console.log("[cron] NHTSA recall sync scheduled for 03:00 UTC daily");
+}
