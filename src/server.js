@@ -43,8 +43,8 @@ app.use("/api/identify", identifyRouter);
 app.use(errorHandler);
 
 // --- Start ---
-app.listen(PORT, () => {
-  console.log(`SeatCheck API listening on :${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`SeatCheck API listening on 0.0.0.0:${PORT}`);
 });
 
 // --- Background jobs ---
