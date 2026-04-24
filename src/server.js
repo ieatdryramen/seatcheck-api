@@ -11,6 +11,7 @@ import { savedSeatsRouter } from "./routes/savedSeats.js";
 import { recallsRouter } from "./routes/recalls.js";
 import { fitCheckRouter } from "./routes/fitCheck.js";
 import { identifyRouter } from "./routes/identify.js";
+import { installCheckRouter } from "./routes/installCheck.js";
 import { syncRecalls } from "./services/recallSync.js";
 import { errorHandler } from "./lib/errors.js";
 
@@ -36,7 +37,7 @@ app.use(cors({
   },
   credentials: true
 }));
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "20mb" }));
 
 // --- Health ---
 app.get("/", (_req, res) => {
@@ -52,6 +53,7 @@ app.use("/api/saved-seats", savedSeatsRouter);
 app.use("/api/recalls", recallsRouter);
 app.use("/api/fit-check", fitCheckRouter);
 app.use("/api/identify", identifyRouter);
+app.use("/api/check-install", installCheckRouter);
 
 // --- Errors ---
 app.use(errorHandler);
