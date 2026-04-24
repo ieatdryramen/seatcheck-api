@@ -12,6 +12,7 @@ import { recallsRouter } from "./routes/recalls.js";
 import { fitCheckRouter } from "./routes/fitCheck.js";
 import { identifyRouter } from "./routes/identify.js";
 import { installCheckRouter } from "./routes/installCheck.js";
+import { feedbackRouter } from "./routes/feedback.js";
 import { syncRecalls } from "./services/recallSync.js";
 import { errorHandler } from "./lib/errors.js";
 
@@ -54,6 +55,7 @@ app.use("/api/recalls", recallsRouter);
 app.use("/api/fit-check", fitCheckRouter);
 app.use("/api/identify", identifyRouter);
 app.use("/api/check-install", installCheckRouter);
+app.use("/api/feedback", feedbackRouter);
 
 // --- Errors ---
 app.use(errorHandler);

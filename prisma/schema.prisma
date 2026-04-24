@@ -161,3 +161,26 @@ model SeatPhoto {
   @@index([userId])
   @@index([carSeatId])
 }
+
+// ============================================================
+// FEEDBACK — in-app "report an issue" submissions from testers
+// ============================================================
+model Feedback {
+  id                 String    @id @default(cuid())
+  userId             String?                           // null if anonymous
+  category           String                            // bug | missing_seat | wrong_info | feature_request | other
+  message            String                            // user's description
+  screen             String?                           // home | profile | camera | fitcheck | settings | saved | auth
+  seatId             String?                           // if on a seat profile
+  userAgent          String?                           // browser info
+  viewport           String?                           // "width x height"
+  contactEmail       String?                           // optional; can follow up
+  status             String    @default("new")         // new | triaged | resolved | dismissed
+  resolvedAt         DateTime?
+  adminNotes         String?
+  createdAt          DateTime  @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
+}
