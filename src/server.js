@@ -18,8 +18,22 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- Middleware ---
+// CORS: if CORS_ORIGIN is "*" (or unset) we reflect any origin so credentialed
+// requests work. Otherwise only allow origins in the comma-separated list.
+const allowedOrigins = (process.env.CORS_ORIGIN || "*")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
+const allowAll = allowedOrigins.length === 0 || allowedOrigins.includes("*");
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(",") ?? "*",
+  origin: (origin, callback) => {
+    // No origin header (curl, server-to-server) — allow
+    if (!origin) return callback(null, true);
+    if (allowAll) return callback(null, origin);
+    if (allowedOrigins.includes(origin)) return callback(null, origin);
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
   credentials: true
 }));
 app.use(express.json({ limit: "10mb" }));
