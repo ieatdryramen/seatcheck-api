@@ -27,7 +27,15 @@ function normalize(s) {
 // Score how well a recall row matches a catalog seat.
 function matchScore(recall, seat) {
   const mfr = normalize(recall.manufacturer);
-  const name = normalize(recall.subject ?? recall.product_description ?? recall.component);
+  // Search both the subject line and the full defect summary — NHTSA puts
+  // affected model names in the narrative text, not in structured fields.
+  const name = normalize([
+    recall.subject,
+    recall.product_description,
+    recall.component,
+    recall.defect_summary,
+    recall.consequence_summary
+  ].filter(Boolean).join(" "));
   const brand = normalize(seat.brand);
   const model = normalize(seat.model);
   const modelNumbers = (seat.modelNumbers ?? []).map(normalize);
@@ -37,18 +45,24 @@ function matchScore(recall, seat) {
   // Brand hit — required signal
   if (mfr.includes(brand) || name.includes(brand)) score += 10;
 
-  // Model hit
+  // Model hit (exact)
   if (name.includes(model)) score += 20;
 
   // Model words (helps with multi-word model names like "4Ever DLX")
-  const modelTokens = model.split(" ").filter(t => t.length >= 3);
-  modelTokens.forEach(t => { if (name.includes(t)) score += 3; });
+  // Only count tokens of length >=4 to avoid "convertible", "booster" generics.
+  const modelTokens = model.split(" ").filter(t => t.length >= 4 && !GENERIC_WORDS.has(t));
+  modelTokens.forEach(t => { if (name.includes(t)) score += 5; });
 
   // Model number exact hit — strongest signal
   modelNumbers.forEach(mn => { if (mn && name.includes(mn)) score += 40; });
 
   return score;
 }
+
+const GENERIC_WORDS = new Set([
+  "convertible", "booster", "infant", "rotating", "harness", "plus", "all",
+  "one", "three", "four", "seat", "car", "deluxe", "dlx", "slim", "max"
+]);
 
 async function fetchRecalls({ since }) {
   const headers = {};
