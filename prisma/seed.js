@@ -135,7 +135,7 @@ const CATALOG = [
   {
     id: "maxicosi-mico-max-plus", brand: "Maxi-Cosi", model: "Mico Max Plus", type: "Infant",
     modelNumbers: ["IC236ETG", "IC236ETA"], msrp: "$249", year: 2019, color: "#4a4a2a", site: SITES.maxicosi,
-    productUrl: "https://maxicosi.com/us/shop/car-seats",
+    productUrl: "https://www.maxicosi.com/us-en/",
     modes: { rearFacing: M({ weight: "4–30 lb", height: "up to 32″" }, { wMin: 4, wMax: 30, hMax: 32 }) },
     expirationYears: 10, faaApproved: true, latchWeightMax: "30 lb",
     dimensions: "28″ D × 17.5″ W × 23.75″ H", seatWeight: "9.6 lb carrier / 8 lb base",
@@ -152,7 +152,7 @@ const CATALOG = [
   {
     id: "peg-perego-primo-viaggio", brand: "Peg Perego", model: "Primo Viaggio 4-35 Nido", type: "Infant",
     modelNumbers: ["IMUN000000BA53RO54"], msrp: "$399", year: 2020, color: "#4a2a2a", site: SITES.peg,
-    productUrl: "https://www.pegperego.com/en_us/baby/us-en/car-seats/",
+    productUrl: "https://www.pegperego.com/",
     modes: { rearFacing: M({ weight: "4–35 lb", height: "up to 32″" }, { wMin: 4, wMax: 35, hMax: 32 }) },
     expirationYears: 7, faaApproved: true, latchWeightMax: "35 lb",
     dimensions: "29″ D × 17″ W × 25″ H", seatWeight: "11 lb carrier / 11.5 lb base",
@@ -254,7 +254,7 @@ const CATALOG = [
   {
     id: "evenflo-revolve360", brand: "Evenflo", model: "Revolve360 Extend", type: "Convertible (Rotating)",
     modelNumbers: ["39212471", "39212472"], msrp: "$449", year: 2021, color: "#4a3a2a", site: SITES.evenflo,
-    productUrl: "https://www.evenflo.com/shop/shop-by-category/car-seats.html",
+    productUrl: "https://www.evenflo.com/shop/",
     modes: {
       rearFacing: M({ weight: "4–50 lb", height: "up to 49″" }, { wMin: 4, wMax: 50, hMax: 49 }),
       forwardFacing: M({ weight: "22–65 lb", height: "up to 49″" }, { wMin: 22, wMax: 65, hMax: 49, ageMin: 24 }),
@@ -275,7 +275,7 @@ const CATALOG = [
   {
     id: "safety1st-grow-and-go", brand: "Safety 1st", model: "Grow and Go All-in-One", type: "All-in-One",
     modelNumbers: ["CC138", "CC198"], msrp: "$199", year: 2018, color: "#2a5f7a", site: SITES.safety1st,
-    productUrl: "https://safety1st.com/shop/shop-by-category/car-seats",
+    productUrl: "https://www.safety1st.com/",
     modes: {
       rearFacing: M({ weight: "5–40 lb", height: "up to 40″" }, { wMin: 5, wMax: 40, hMax: 40 }),
       forwardFacing: M({ weight: "22–65 lb", height: "up to 49″" }, { wMin: 22, wMax: 65, hMax: 49, ageMin: 24 }),
@@ -296,7 +296,7 @@ const CATALOG = [
   {
     id: "diono-radian-3rxt", brand: "Diono", model: "Radian 3RXT", type: "All-in-One",
     modelNumbers: ["50610", "50620"], msrp: "$369", year: 2019, color: "#3a2a4a", site: SITES.diono,
-    productUrl: "https://us.diono.com/collections/car-seats",
+    productUrl: "https://diono.com/",
     modes: {
       rearFacing: M({ weight: "5–50 lb", height: "up to 44″" }, { wMin: 5, wMax: 50, hMax: 44 }),
       forwardFacing: M({ weight: "22–65 lb", height: "up to 57″" }, { wMin: 22, wMax: 65, hMax: 57, ageMin: 24 }),
@@ -317,7 +317,7 @@ const CATALOG = [
   {
     id: "clek-foonf", brand: "Clek", model: "Foonf", type: "Convertible",
     modelNumbers: ["FO23U2-BK", "FO23U2-HR"], msrp: "$579", year: 2012, color: "#1a1a1a", site: SITES.clek,
-    productUrl: "https://clekinc.com/car-seats/",
+    productUrl: "https://clekinc.com/collections/car-seats",
     modes: {
       rearFacing: M({ weight: "14–50 lb", height: "25–43″" }, { wMin: 14, wMax: 50, hMax: 43 }),
       forwardFacing: M({ weight: "22–65 lb", height: "up to 49″" }, { wMin: 22, wMax: 65, hMax: 49, ageMin: 24 })
@@ -377,7 +377,7 @@ const CATALOG = [
   {
     id: "evenflo-symphony-all-in-one", brand: "Evenflo", model: "Symphony DLX All-in-One", type: "All-in-One",
     modelNumbers: ["34812033", "34812034"], msrp: "$249", year: 2018, color: "#4a3a5a", site: SITES.evenflo,
-    productUrl: "https://www.evenflo.com/shop/shop-by-category/car-seats.html",
+    productUrl: "https://www.evenflo.com/shop/",
     modes: {
       rearFacing: M({ weight: "5–40 lb", height: "up to 37″" }, { wMin: 5, wMax: 40, hMax: 37 }),
       forwardFacing: M({ weight: "22–65 lb", height: "up to 50″" }, { wMin: 22, wMax: 65, hMax: 50, ageMin: 24 }),
@@ -459,7 +459,7 @@ const CATALOG = [
   {
     id: "clek-oobr", brand: "Clek", model: "Oobr", type: "Booster",
     modelNumbers: ["OO23U1-BK"], msrp: "$299", year: 2013, color: "#1a1a1a", site: SITES.clek,
-    productUrl: "https://clekinc.com/car-seats/",
+    productUrl: "https://clekinc.com/collections/car-seats",
     modes: {
       highbackBooster: M({ weight: "40–100 lb", height: "40–57″", age: "at least 4 years" }, { wMin: 40, wMax: 100, hMax: 57, ageMin: 48 }),
       backlessBooster: M({ weight: "40–120 lb", height: "up to 57″", age: "at least 4 years" }, { wMin: 40, wMax: 120, hMax: 57, ageMin: 48 })
@@ -499,7 +499,7 @@ const CATALOG = [
   {
     id: "cosco-topside", brand: "Cosco", model: "Topside Backless Booster", type: "Booster",
     modelNumbers: ["BC029DJF"], msrp: "$20", year: 2005, color: "#5a3a5a", site: SITES.cosco,
-    productUrl: "https://coscokids.com/shop/shop-by-category/car-seats",
+    productUrl: "https://www.coscokids.com/",
     modes: {
       backlessBooster: M({ weight: "40–100 lb", height: "43–57″", age: "at least 4 years" }, { wMin: 40, wMax: 100, hMax: 57, ageMin: 48 })
     },
@@ -517,7 +517,7 @@ const CATALOG = [
   {
     id: "evenflo-gotime", brand: "Evenflo", model: "GoTime LX", type: "Booster",
     modelNumbers: ["30812403"], msrp: "$79", year: 2020, color: "#2a5f4a", site: SITES.evenflo,
-    productUrl: "https://www.evenflo.com/shop/shop-by-category/car-seats.html",
+    productUrl: "https://www.evenflo.com/shop/",
     modes: {
       highbackBooster: M({ weight: "40–120 lb", height: "44–57″", age: "at least 4 years" }, { wMin: 40, wMax: 120, hMax: 57, ageMin: 48 }),
       backlessBooster: M({ weight: "40–120 lb", height: "44–57″", age: "at least 4 years" }, { wMin: 40, wMax: 120, hMax: 57, ageMin: 48 })
@@ -578,7 +578,7 @@ const CATALOG = [
   {
     id: "evenflo-sonus", brand: "Evenflo", model: "Sonus Convertible", type: "Convertible",
     modelNumbers: ["34711934"], msrp: "$99", year: 2016, color: "#3a4a5a", site: SITES.evenflo,
-    productUrl: "https://www.evenflo.com/shop/shop-by-category/car-seats.html",
+    productUrl: "https://www.evenflo.com/shop/",
     modes: {
       rearFacing: M({ weight: "5–40 lb", height: "up to 37″" }, { wMin: 5, wMax: 40, hMax: 37 }),
       forwardFacing: M({ weight: "22–65 lb", height: "up to 50″" }, { wMin: 22, wMax: 65, hMax: 50, ageMin: 24 })
