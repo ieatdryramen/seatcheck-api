@@ -26,6 +26,7 @@ recallsRouter.get("/for-seat/:carSeatId", asyncHandler(async (req, res) => {
 }));
 
 // POST /api/recalls/sync — manually trigger NHTSA sync (protected in prod via ADMIN_TOKEN)
+// Use ?full=true to force a full history resync (also re-links existing recalls to catalog seats)
 recallsRouter.post("/sync", asyncHandler(async (req, res) => {
   if (process.env.NODE_ENV === "production") {
     const token = req.headers["x-admin-token"];
@@ -33,6 +34,7 @@ recallsRouter.post("/sync", asyncHandler(async (req, res) => {
       return res.status(401).json({ error: "Unauthorized" });
     }
   }
-  const result = await syncRecalls();
+  const full = req.query.full === "true";
+  const result = await syncRecalls({ full });
   res.json(result);
 }));
