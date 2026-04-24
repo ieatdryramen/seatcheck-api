@@ -54,10 +54,9 @@ async function fetchRecalls({ since }) {
   const headers = {};
   if (APP_TOKEN) headers["X-App-Token"] = APP_TOKEN;
 
-  // Child seat recalls can appear as either component containing "CHILD SEAT"
-  // or product type = "C" (child seat) in the NHTSA dataset.
-  // Use SoQL to filter server-side.
-  let whereClause = `(upper(component) like '%CHILD SEAT%' OR upper(component) like '%CHILD RESTRAINT%')`;
+  // Filter server-side. recall_type='Child Seat' captures actual child-seat
+  // product recalls (not vehicle recalls that happen to mention child seats).
+  let whereClause = `recall_type='Child Seat'`;
   if (since) {
     const iso = new Date(since).toISOString().split("T")[0];
     whereClause += ` AND report_received_date > '${iso}'`;
@@ -107,7 +106,7 @@ export async function syncRecalls({ full = false } = {}) {
   let matchedCount = 0;
 
   for (const row of rows) {
-    const nhtsaId = row.nhtsa_campaign_number ?? row.campaign_number;
+    const nhtsaId = row.nhtsa_id ?? row.nhtsa_campaign_number ?? row.campaign_number;
     if (!nhtsaId) continue;
 
     // Try to match this recall to a catalog seat
@@ -125,35 +124,24 @@ export async function syncRecalls({ full = false } = {}) {
       ? new Date(row.report_received_date)
       : new Date();
 
+    const payload = {
+      carSeatId: linkedSeatId,
+      manufacturer: row.manufacturer ?? "Unknown",
+      productName: row.subject ?? row.product_description ?? "Unknown product",
+      componentDesc: row.component ?? null,
+      summary: row.defect_summary ?? row.consequence_summary ?? row.summary ?? "",
+      remedy: row.corrective_action ?? row.remedy ?? null,
+      datePublished,
+      affectedUnitsText: row.potentially_affected
+        ? String(row.potentially_affected)
+        : (row.potential_units_affected ? String(row.potential_units_affected) : null),
+      rawPayload: row
+    };
+
     await prisma.recall.upsert({
       where: { nhtsaId },
-      update: {
-        carSeatId: linkedSeatId,
-        manufacturer: row.manufacturer ?? "Unknown",
-        productName: row.subject ?? row.product_description ?? "Unknown product",
-        componentDesc: row.component ?? null,
-        summary: row.summary ?? row.consequence_defect ?? "",
-        remedy: row.corrective_action ?? row.remedy ?? null,
-        datePublished,
-        affectedUnitsText: row.potential_units_affected
-          ? String(row.potential_units_affected)
-          : null,
-        rawPayload: row
-      },
-      create: {
-        nhtsaId,
-        carSeatId: linkedSeatId,
-        manufacturer: row.manufacturer ?? "Unknown",
-        productName: row.subject ?? row.product_description ?? "Unknown product",
-        componentDesc: row.component ?? null,
-        summary: row.summary ?? row.consequence_defect ?? "",
-        remedy: row.corrective_action ?? row.remedy ?? null,
-        datePublished,
-        affectedUnitsText: row.potential_units_affected
-          ? String(row.potential_units_affected)
-          : null,
-        rawPayload: row
-      }
+      update: payload,
+      create: { nhtsaId, ...payload }
     });
     upsertedCount++;
   }
